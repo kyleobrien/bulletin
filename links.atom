@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>Kyle O'Brien</name>
+  </author>
+  <id>http://www.ruby-lang.org/en/feeds/news.rss</id>
+  <link href="http://ridethewalr.us/"/>
+  <title>ridethewalr.us</title>
+  <updated>2013-02-18T23:55:01+00:00</updated>
+  <entry>
+    <id>http://techcrunch.com/2013/02/18/hackers-turn-burger-kings-tweet-stream-into-a-whopper-of-a-mess/</id>
+    <link href="http://techcrunch.com/2013/02/18/hackers-turn-burger-kings-tweet-stream-into-a-whopper-of-a-mess/"/>
+    <summary>&lt;blockquote&gt;&lt;p&gt;I have a line in to Burger King PR but I can assume that they are not, in fact, lovin' it.&lt;/p&gt;&lt;/blockquote&gt;
+</summary>
+    <title>Hackers Turn Burger King’s Tweet Stream Into a Whopper of a Mess</title>
+    <updated>2013-02-18T19:57:07Z</updated>
+    <dc:date>2013-02-18T19:57:07Z</dc:date>
+    <dc:date>2013-02-18T19:57:07Z</dc:date>
+  </entry>
+  <dc:date>2013-02-18T23:55:01+00:00</dc:date>
+</feed>
