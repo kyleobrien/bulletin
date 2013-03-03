@@ -9,20 +9,20 @@ require 'time'
 # Gems
 
 require 'json'
-require 'rdiscount'
+require 'redcarpet'
+require 'zip/zip'
 
 WALRUSER_VERSION = "0.8.1"
 WALRUSER_PINBOARD_USERNAME = "kyleobrien"
 WALRUSER_PINBOARD_TAG = "rtw"
 WALRUSER_PIBOARD_ITEM_COUNT = "20"
 WALRUSER_SITE_TITLE = "Ride the Walrus!"
-WALRUSER_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net), and presented here for your edification. Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [PROJECT A2](), a static site generator built on top of [Pinboard](http://pinboard.in). It's open source too, so check it out."
+WALRUSER_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
 
 def produceHtmlHeader(page_type)
 	date = ""
 	title = ""
-	markdown = RDiscount.new(WALRUSER_SITE_DESCRIPTION)
-	
+	markdown = Redcarpet::Markdown.new(Redcarpet::Render::XHTML, {})	   
 	if (page_type == "home")
 		date = Time.now.strftime("%A, %B %e").lstrip
 		title = "#{WALRUSER_SITE_TITLE} - Home" 
@@ -52,7 +52,7 @@ def produceHtmlHeader(page_type)
 	html_header += "\t\t\t\t<span>Last updated: <time>#{date}</time></span>\n"
 	html_header += "\t\t\t</div>\n"
     html_header += "\t\t\t<div id=\"site-description\">\n"
-	html_header += "\t\t\t#{markdown.to_html}"
+	html_header += "\t\t\t#{markdown.render(WALRUSER_SITE_DESCRIPTION)}"
     html_header += "\t\t\t</div>\n"
 end
 
@@ -61,8 +61,8 @@ def produceItemHtmlFromBookmark(bookmark)
     html_item += "\t\t\t\t<li>\n"
 	html_item += "\t\t\t\t\t<a href=\"#{bookmark["u"]}\">#{bookmark["d"]}</a>\n"
 
-    markdown = RDiscount.new(bookmark["n"])
-    html_item += "\t\t\t\t\t#{markdown.to_html}\n"
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::XHTML, {})
+    html_item += "\t\t\t\t\t#{markdown.render(bookmark["n"])}\n"
 
     html_item += "\t\t\t\t\t<time datetime=\"#{bookmark["dt"]}\" />\n"
 	html_item += "\t\t\t\t</li>\n"
@@ -75,8 +75,8 @@ script_start_time = Time.now
 # Redirect the standard output.
 
 directory_for_script = File.expand_path(File.dirname(__FILE__))
-$stdout = File.new("#{directory_for_script}/walruser.log", "a")
-$stdout.sync = true
+#$stdout = File.new("#{directory_for_script}/walruser.log", "a")
+#$stdout.sync = true
 
 
 # Grab the JSON-formatted feed from pinboard.
@@ -205,11 +205,11 @@ if (!array_for_archiving.empty?)
 			maker.items.new_item do |item|
 				item.link = "#{bookmarked_item["u"]}"
 				item.title = "#{bookmarked_item["d"]}"
-                markdown = RDiscount.new(bookmarked_item["n"])
-				item.description = markdown.to_html
+                markdown = Redcarpet::Markdown.new(Redcarpet::Render::XHTML, {})
+				item.description = markdown.render(bookmarked_item["n"])
 				item.updated = "#{bookmarked_item["dt"]}"
 			end
-	}
+	        }
 	end
 	
 	# save the rss to a file
@@ -221,9 +221,43 @@ if (!array_for_archiving.empty?)
 		puts "Couldn't write RSS feed!"
 		puts err
 	end
+
+
+	# Zip up the contents of the site, upload it to S3, then delete the local copy.
+	
+	root_folder = directory_for_script
+	zip_filename = root_folder + '/' + json_filename + '.zip'
+	
+	Zip::ZipFile.open(zip_filename, Zip::ZipFile::CREATE) do |zipfile|
+		filenames = ['index.html', 'main.css', 'links.atom', 'favicon.ico', 'touch-icon-ipad-precomposed.png', 'touch-icon-ipad-retina-precomposed.png', 'touch-icon-iphone-precomposed.png', 'touch-icon-iphone-retina-precomposed.png']
+		filenames.each do |filename|
+			zipfile.add(filename, root_folder + '/' + filename)
+		end
+		
+		Dir.glob(archive_path + '/*/') { |year_folder|
+			year = year_folder.split('/').last
+			Dir.glob(year_folder + '/*/') { |month_folder|
+				month = month_folder.split('/').last
+				Dir.glob(month_folder + '/*') { |json_file|
+					relative_path = 'archive/' + year + '/' + month + '/' + File.basename(json_file)
+					zipfile.add(relative_path, json_file)
+				}
+			}
+		}
+	end
+	
+	# TODO: Need to upload to S3 here...
+
+	# Maybe check at the beginning and delete first so we don't error if there's an existing?
+	begin
+		file = File.delete(zip_filename)
+	rescue => err
+		puts "Couldn't delete the local, temporary zip file!"
+		puts err
+	end
+
 end
 
 # Restore standard output.
 
 $stdout = STDOUT
-
