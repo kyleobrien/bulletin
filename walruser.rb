@@ -8,6 +8,7 @@ require 'time'
 
 # Gems
 
+require 'aws/s3'
 require 'json'
 require 'redcarpet'
 require 'zip/zip'
@@ -18,6 +19,7 @@ WALRUSER_PINBOARD_TAG = "rtw"
 WALRUSER_PIBOARD_ITEM_COUNT = "20"
 WALRUSER_SITE_TITLE = "Ride the Walrus!"
 WALRUSER_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
+WALRUSER_S3_BUCKET_NAME = "backups.ridethewalr.us"
 
 def produceHtmlHeader(page_type)
 	date = ""
@@ -246,7 +248,37 @@ if (!array_for_archiving.empty?)
 		}
 	end
 	
-	# TODO: Need to upload to S3 here...
+	# TODO: Need to upload to S3 here.
+	
+	access_key_id = 'access_key_id_placeholder'
+	secret_access_key = 'secret_access_key_placeholder'
+	begin
+		File.open('.amazon_keys', 'r').each_line do |line|
+			components = line.strip.split('=')
+			if (components[0] == 'access_key_id')
+				access_key_id = components[1]
+			elsif (components[0] == 'secret_access_key')
+				secret_access_key = components[1]
+			end
+		end
+	rescue => err
+		puts "Couldn't open amazon key file."
+		puts err
+	end
+
+	AWS::S3::Base.establish_connection!(
+		:access_key_id => access_key_id,
+		:secret_access_key => secret_access_key
+	)
+	
+	if (!AWS::S3::Service.buckets.include?(WALRUSER_S3_BUCKET_NAME))
+		AWS::S3::Bucket.create(WALRUSER_S3_BUCKET_NAME)
+	end
+	
+	file = json_filename + '.zip'
+	AWS::S3::S3Object.store(file, open(zip_filename), WALRUSER_S3_BUCKET_NAME)
+
+	AWS::S3::Base.disconnect!()
 
 	# Maybe check at the beginning and delete first so we don't error if there's an existing?
 	begin

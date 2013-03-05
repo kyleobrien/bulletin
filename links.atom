@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
   <author>
     <name>Kyle O'Brien</name>
   </author>
   <id>http://www.ruby-lang.org/en/feeds/news.rss</id>
   <link href="http://ridethewalr.us/"/>
   <title>ridethewalr.us</title>
-  <updated>2013-03-03T07:33:07+00:00</updated>
+  <updated>2013-03-05T06:36:26+00:00</updated>
   <entry>
-    <id>http://www.nytimes.com/2013/02/24/magazine/the-extraordinary-science-of-junk-food.html?_r=2&amp;pagewanted=all&amp;</id>
-    <link href="http://www.nytimes.com/2013/02/24/magazine/the-extraordinary-science-of-junk-food.html?_r=2&amp;pagewanted=all&amp;"/>
-    <summary>&lt;p&gt;Optional weekend reading:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;To get a better feel for their work, I called on Steven Witherly, a food scientist who wrote a fascinating guide for industry insiders titled, “Why Humans Like Junk Food.” I brought him two shopping bags filled with a variety of chips to taste. He zeroed right in on the Cheetos. “This,” Witherly said, “is one of the most marvelously constructed foods on the planet, in terms of pure pleasure.” He ticked off a dozen attributes of the Cheetos that make the brain say more. But the one he focused on most was the puff’s uncanny ability to melt in the mouth. “It’s called vanishing caloric density,” Witherly said. “If something melts down quickly, your brain thinks that there’s no calories in it . . . you can just keep eating it forever.”&lt;/p&gt;
-&lt;/blockquote&gt;
+    <id>http://imgur.com/a/EkVDS</id>
+    <link href="http://imgur.com/a/EkVDS"/>
+    <summary>&lt;p&gt;Pretty.&lt;/p&gt;
 </summary>
-    <title>The Extraordinary Science of Addictive Junk Food</title>
-    <updated>2013-03-03T05:49:29Z</updated>
-    <dc:date>2013-03-03T05:49:29Z</dc:date>
-    <dc:date>2013-03-03T05:49:29Z</dc:date>
+    <title>Gourmet Jello Shots</title>
+    <updated>2013-03-05T06:31:50Z</updated>
+    <dc:date>2013-03-05T06:31:50Z</dc:date>
+    <dc:date>2013-03-05T06:31:50Z</dc:date>
   </entry>
-  <entry>
-    <id>http://mini.quietbabylon.com/post/44276219648/the-singularity-already-happened-we-got-corporations</id>
-    <link href="http://mini.quietbabylon.com/post/44276219648/the-singularity-already-happened-we-got-corporations"/>
-    <summary>&lt;p&gt;The smartest thing I&amp;#39;ve read in months.&lt;/p&gt;
-</summary>
-    <title>Corporations as Hostile AI</title>
-    <updated>2013-03-03T05:53:47Z</updated>
-    <dc:date>2013-03-03T05:53:47Z</dc:date>
-    <dc:date>2013-03-03T05:53:47Z</dc:date>
-  </entry>
-  <dc:date>2013-03-03T07:33:07+00:00</dc:date>
+  <dc:date>2013-03-05T06:36:26+00:00</dc:date>
 </feed>
