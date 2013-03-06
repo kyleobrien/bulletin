@@ -44,4 +44,8 @@ yum install make
 // File location
 /var/www/
 
+License
+=======
+
+Code is available under a BSD-style license. See the included LICENSE file for details.
 
