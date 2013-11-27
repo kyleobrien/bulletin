@@ -13,6 +13,7 @@ require 'json'
 require 'redcarpet'
 require 'zip/zip'
 
+<<<<<<< HEAD
 BULLETIN_VERSION = "0.8.2"
 BULLETIN_PINBOARD_USERNAME = "kyleobrien"
 BULLETIN_PINBOARD_TAG = "rtw"
@@ -53,7 +54,7 @@ def produceHtmlHeader(page_type)
 	html_header += "\t\t\t<div id=\"update-time\">\n"
 	html_header += "\t\t\t\t<span>Last updated: <time>#{date}</time></span>\n"
 	html_header += "\t\t\t</div>\n"
-    html_header += "\t\t\t<div id=\"site-description\">\n"
+ 	html_header += "\t\t\t<div id=\"site-description\">\n"
 	html_header += "\t\t\t#{markdown.render(BULLETIN_SITE_DESCRIPTION)}"
     html_header += "\t\t\t</div>\n"
 end
