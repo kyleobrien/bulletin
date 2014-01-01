@@ -13,13 +13,13 @@ require 'json'
 require 'redcarpet'
 require 'zip/zip'
 
-WALRUSER_VERSION = "0.8.1"
-WALRUSER_PINBOARD_USERNAME = "kyleobrien"
-WALRUSER_PINBOARD_TAG = "rtw"
-WALRUSER_PIBOARD_ITEM_COUNT = "20"
-WALRUSER_SITE_TITLE = "Ride the Walrus!"
-WALRUSER_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
-WALRUSER_S3_BUCKET_NAME = "backups.ridethewalr.us"
+BULLETIN_VERSION = "0.8.2"
+BULLETIN_PINBOARD_USERNAME = "kyleobrien"
+BULLETIN_PINBOARD_TAG = "rtw"
+BULLETIN_PIBOARD_ITEM_COUNT = "20"
+BULLETIN_SITE_TITLE = "Ride the Walrus!"
+BULLETIN_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
+BULLETIN_S3_BUCKET_NAME = "backups.ridethewalr.us"
 
 def produceHtmlHeader(page_type)
 	date = ""
@@ -27,13 +27,13 @@ def produceHtmlHeader(page_type)
 	markdown = Redcarpet::Markdown.new(Redcarpet::Render::XHTML, {})	   
 	if (page_type == "home")
 		date = Time.now.strftime("%A, %B %e").lstrip
-		title = "#{WALRUSER_SITE_TITLE} - Home" 
+		title = "#{BULLETIN_SITE_TITLE} - Home" 
 	elsif (page_type == "archive")
 		date = Time.now.strftime("%B %e").lstrip
-		title = "#{WALRUSER_SITE_TITLE} - #{date}"
+		title = "#{BULLETIN_SITE_TITLE} - #{date}"
 	else
 		date = "ERR"
-		title = "#{WALRUSER_SITE_TITLE} - ERR"
+		title = "#{BULLETIN_SITE_TITLE} - ERR"
 	end
 
 	html_header = "<html lang=\"en\">\n\t<head>\n"
@@ -48,13 +48,13 @@ def produceHtmlHeader(page_type)
 	html_header += "\t\t<meta name=\"viewport\" content=\"width=device-width\">\n"
 	html_header += "\t\t<title>#{title}</title>\n"
 	html_header += "\t</head>\n\t<body>\n"
-	html_header += "\t\t<h1>#{WALRUSER_SITE_TITLE}</h1>\n"
+	html_header += "\t\t<h1>#{BULLETIN_SITE_TITLE}</h1>\n"
 	html_header += "\t\t<div id=\"container\">\n"
 	html_header += "\t\t\t<div id=\"update-time\">\n"
 	html_header += "\t\t\t\t<span>Last updated: <time>#{date}</time></span>\n"
 	html_header += "\t\t\t</div>\n"
     html_header += "\t\t\t<div id=\"site-description\">\n"
-	html_header += "\t\t\t#{markdown.render(WALRUSER_SITE_DESCRIPTION)}"
+	html_header += "\t\t\t#{markdown.render(BULLETIN_SITE_DESCRIPTION)}"
     html_header += "\t\t\t</div>\n"
 end
 
@@ -77,16 +77,16 @@ script_start_time = Time.now
 # Redirect the standard output.
 
 directory_for_script = File.expand_path(File.dirname(__FILE__))
-#$stdout = File.new("#{directory_for_script}/walruser.log", "a")
-#$stdout.sync = true
+$stdout = File.new("#{directory_for_script}/walruser.log", "a")
+$stdout.sync = true
 
 
 # Grab the JSON-formatted feed from pinboard.
 
 parsed_json = nil
-json_url = "http://feeds.pinboard.in/json/u:#{WALRUSER_PINBOARD_USERNAME}/t:#{WALRUSER_PINBOARD_TAG}/?count=#{WALRUSER_PIBOARD_ITEM_COUNT}"
+json_url = "http://feeds.pinboard.in/json/u:#{BULLETIN_PINBOARD_USERNAME}/t:#{BULLETIN_PINBOARD_TAG}/?count=#{BULLETIN_PIBOARD_ITEM_COUNT}"
 
-open(json_url, "User-Agent" => "RIDETHEWALR.US/#{WALRUSER_VERSION}") { |file|
+open(json_url, "User-Agent" => "RIDETHEWALR.US/#{BULLETIN_VERSION}") { |file|
 	parsed_json = JSON.parse(file.read)
 }
 
@@ -249,11 +249,11 @@ if (!array_for_archiving.empty?)
 	end
 	
 	# TODO: Need to upload to S3 here.
-	
+	puts "backing up..."	
 	access_key_id = 'access_key_id_placeholder'
 	secret_access_key = 'secret_access_key_placeholder'
 	begin
-		File.open('.amazon_keys', 'r').each_line do |line|
+		File.open("#{directory_for_script}/.amazon_keys", 'r').each_line do |line|
 			components = line.strip.split('=')
 			if (components[0] == 'access_key_id')
 				access_key_id = components[1]
@@ -271,15 +271,15 @@ if (!array_for_archiving.empty?)
 		:secret_access_key => secret_access_key
 	)
 	
-	if (!AWS::S3::Service.buckets.include?(WALRUSER_S3_BUCKET_NAME))
-		AWS::S3::Bucket.create(WALRUSER_S3_BUCKET_NAME)
+	if (!AWS::S3::Service.buckets.include?(BULLETIN_S3_BUCKET_NAME))
+		AWS::S3::Bucket.create(BULLETIN_S3_BUCKET_NAME)
 	end
 	
 	file = json_filename + '.zip'
-	AWS::S3::S3Object.store(file, open(zip_filename), WALRUSER_S3_BUCKET_NAME)
+	AWS::S3::S3Object.store(file, open(zip_filename), BULLETIN_S3_BUCKET_NAME)
 
 	AWS::S3::Base.disconnect!()
-
+	puts "done backing up."
 	# Maybe check at the beginning and delete first so we don't error if there's an existing?
 	begin
 		file = File.delete(zip_filename)
@@ -288,6 +288,7 @@ if (!array_for_archiving.empty?)
 		puts err
 	end
 
+	puts "end of script!"
 end
 
 # Restore standard output.

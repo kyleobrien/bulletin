@@ -1,13 +1,13 @@
 bulletin
 ========
 
-A static site generator built on top of Pinboard.
+A link-blog, static site generator built on top of Pinboard. Modeled after [Daring Fireball's Linked List](http://daringfireball.net/linked/) and [Waxy Links](http://waxy.org/links/).
 
 Dependencies
 ============
 
-+ Server (using EC2)
-+ Web Server (using lighttpd)
++ Server (DigitalOcean)
++ Web Server (Nginx)
 + Ruby
   + Gem 1
   + Gem 2
