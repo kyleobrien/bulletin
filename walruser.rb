@@ -17,7 +17,7 @@ BULLETIN_VERSION = "0.8.2"
 BULLETIN_PINBOARD_USERNAME = "kyleobrien"
 BULLETIN_PINBOARD_TAG = "rtw"
 BULLETIN_PIBOARD_ITEM_COUNT = "20"
-BULLETIN_SITE_TITLE = "Ride the Walrus!"
+BULLETIN_SITE_TITLE = "okay links"
 BULLETIN_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
 BULLETIN_S3_BUCKET_NAME = "backups.ridethewalr.us"
 
@@ -45,6 +45,8 @@ def produceHtmlHeader(page_type)
 	html_header += "\t\t<link rel=\"apple-touch-icon-precomposed\" sizes=\"114x114\" href=\"touch-icon-iphone-retina-precomposed.png\" />\n"
 	html_header += "\t\t<link rel=\"apple-touch-icon-precomposed\" sizes=\"144x144\" href=\"touch-icon-ipad-retina-precomposed.png\" />\n"
 	html_header += "\t\t<meta charset=\"utf-8\">\n"
+	html_header += "\t\t<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">"
+	html_header += "\t\t<meta name=\"apple-mobile-web-app-title\" content=\"links\">"
 	html_header += "\t\t<meta name=\"viewport\" content=\"width=device-width\">\n"
 	html_header += "\t\t<title>#{title}</title>\n"
 	html_header += "\t</head>\n\t<body>\n"
@@ -290,6 +292,8 @@ if (!array_for_archiving.empty?)
 
 	puts "end of script!"
 end
+
+puts "made it to the end"
 
 # Restore standard output.
 
