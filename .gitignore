@@ -4,3 +4,5 @@ index.html
 links.atom
 walruser.log
 *.zip
+.DS_Store
+

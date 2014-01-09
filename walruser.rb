@@ -17,7 +17,7 @@ BULLETIN_VERSION = "0.8.2"
 BULLETIN_PINBOARD_USERNAME = "kyleobrien"
 BULLETIN_PINBOARD_TAG = "rtw"
 BULLETIN_PIBOARD_ITEM_COUNT = "20"
-BULLETIN_SITE_TITLE = "okay links"
+BULLETIN_SITE_TITLE = "links"
 BULLETIN_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
 BULLETIN_S3_BUCKET_NAME = "backups.ridethewalr.us"
 
