@@ -5,26 +5,17 @@
     <name>Kyle O'Brien</name>
   </author>
   <id>http://www.ruby-lang.org/en/feeds/news.rss</id>
-  <link href="http://ridethewalr.us/"/>
-  <title>ridethewalr.us</title>
-  <updated>2014-01-07T19:38:21+00:00</updated>
+  <link href="http://kyleobrien.net/links/"/>
+  <title>links</title>
+  <updated>2014-01-10T20:13:42+00:00</updated>
   <entry>
-    <id>http://gamesdonequick.com/</id>
-    <link href="http://gamesdonequick.com/"/>
-    <summary>&lt;p&gt;Speedrunning marathon for cancer research.&lt;/p&gt;
+    <id>https://thedaywefightback.org/</id>
+    <link href="https://thedaywefightback.org/"/>
+    <summary>&lt;p&gt;Online activism to fight NSA spying. Feels light on meaningful action a regular citizen could take to curtail these abuses. Website banners and social networks aren&amp;#39;t going to cut it.&lt;/p&gt;
 </summary>
-    <title>Awesome Games Done Quick</title>
-    <updated>2014-01-06T20:06:21Z</updated>
-    <dc:date>2014-01-06T20:06:21Z</dc:date>
+    <title>The Day We Fight Back</title>
+    <updated>2014-01-10T19:18:52Z</updated>
+    <dc:date>2014-01-10T19:18:52Z</dc:date>
   </entry>
-  <entry>
-    <id>http://nation.time.com/2014/01/07/satanists-unveil-statue-for-oklahoma-capitol/</id>
-    <link href="http://nation.time.com/2014/01/07/satanists-unveil-statue-for-oklahoma-capitol/"/>
-    <summary>&lt;p&gt;Be careful what you wish for.&lt;/p&gt;
-</summary>
-    <title>Satanic Temple Unveils Monument for Capitol</title>
-    <updated>2014-01-07T15:44:43Z</updated>
-    <dc:date>2014-01-07T15:44:43Z</dc:date>
-  </entry>
-  <dc:date>2014-01-07T19:38:21+00:00</dc:date>
+  <dc:date>2014-01-10T20:13:42+00:00</dc:date>
 </feed>

@@ -1,5 +1,5 @@
-# walruser.rb
-# Scraper for 'linked list' style blog that's built on pinboard.in
+# bulletin.rb
+# A link-blog, static site generator built on top of pinboard.in.
 
 require 'open-uri'
 require 'rss'
@@ -13,13 +13,16 @@ require 'json'
 require 'redcarpet'
 require 'zip/zip'
 
-BULLETIN_VERSION = "0.8.2"
+BULLETIN_VERSION = "0.8.3"
 BULLETIN_PINBOARD_USERNAME = "kyleobrien"
-BULLETIN_PINBOARD_TAG = "rtw"
+BULLETIN_PINBOARD_TAG = "bulletin"
 BULLETIN_PIBOARD_ITEM_COUNT = "20"
 BULLETIN_SITE_TITLE = "links"
-BULLETIN_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a static site generator built on top of [Pinboard](http://pinboard.in)."
-BULLETIN_S3_BUCKET_NAME = "backups.ridethewalr.us"
+BULLETIN_SITE_DESCRIPTION = "A compilation of the day's interesting links, collected by [Kyle](http://kyleobrien.net). Updated nightly (usually). Everything on this site is made available to you under a [Creative Commons License](http://creativecommons.org/licenses/by/3.0/). We're running on [bulletin](https://github.com/kyleobrien/bulletin), a link-blog, static site generator built on top of [Pinboard](http://pinboard.in)."
+BULLETIN_S3_BUCKET_NAME = "linksbackup.kyleobrien.net"
+BULLETIN_RSS_AUTHOR = "Kyle O'Brien"
+BULLETIN_RSS_TITLE = "links"
+BULLETIN_RSS_LINK = "http://kyleobrien.net/links/"
 
 def produceHtmlHeader(page_type)
 	date = ""
@@ -74,58 +77,85 @@ def produceItemHtmlFromBookmark(bookmark)
 	return html_item
 end
 
+def deleteZipBackup(filename)
+	if (File.exists?(filename))
+		begin
+			file = File.delete(filename)
+		rescue => err
+			puts "Couldn't delete the local, temporary zip file!"
+			puts err
+		end
+	end	
+end
+
+# ================
+# =  SCRIPT GO!  =
+# ================
+
 script_start_time = Time.now
 
-# Redirect the standard output.
-
+# Redirect the standard output to log..
 directory_for_script = File.expand_path(File.dirname(__FILE__))
-$stdout = File.new("#{directory_for_script}/walruser.log", "a")
+$stdout = File.new("#{directory_for_script}/bulletin.log", "a")
 $stdout.sync = true
+
+timestamp = script_start_time.strftime("%Y-%m-%dT%H:%M:%S%z").lstrip
+puts "============================"
+puts "#{timestamp}"
 
 
 # Grab the JSON-formatted feed from pinboard.
+puts "Grab the JSON-formatted feed from pinboard."
 
 parsed_json = nil
 json_url = "http://feeds.pinboard.in/json/u:#{BULLETIN_PINBOARD_USERNAME}/t:#{BULLETIN_PINBOARD_TAG}/?count=#{BULLETIN_PIBOARD_ITEM_COUNT}"
 
-open(json_url, "User-Agent" => "RIDETHEWALR.US/#{BULLETIN_VERSION}") { |file|
+open(json_url, "User-Agent" => "bulletin/#{BULLETIN_VERSION}") { |file|
 	parsed_json = JSON.parse(file.read)
 }
 
 
-# Pull out relevant information from each item in the JSON.
+# Pull out relevant information from each item in the JSON response.
+puts "Pull out relevant information from each item in the JSON response."
 
 html_list = ""
-array_for_archiving = []
+archive_array = []
+
 unless (parsed_json.nil?)
 	parsed_json.each { |bookmarked_item|
-		time = Time.parse(bookmarked_item["dt"], '%Y-%m-%dT%H:%M:%S%Z')
+		time = Time.parse(bookmarked_item["dt"], '%Y-%m-%dT%H:%M:%S%z')
+
+		# Only include the item if it was posted in the last day.
 		if (script_start_time.tv_sec - time.tv_sec < (60 * 60 * 24))
 			html_item = produceItemHtmlFromBookmark(bookmarked_item)
+
 			html_list = html_item + html_list
-			array_for_archiving << bookmarked_item
+			archive_array << bookmarked_item
 		end
 	}
-	if (!array_for_archiving.empty?)
-		array_for_archiving.reverse!
+
+	# Each day's archive should sort oldest to newest.
+	if (!archive_array.empty?)
+		archive_array.reverse!
 	end
 end
 
 
-# Put together the webpage.
+# Assemble the webpage.
+puts "Assemble the webpage."
 
 html_header = produceHtmlHeader("home")
-
-if (!array_for_archiving.empty?)
-	html_list = "\t\t<ul>\n" + html_list + "\t\t</ul>\n"
-    html_list += "\t\t</div>\n\t</body>\n</html>"
-end
-
+html_list = "\t\t<ul>\n" + html_list + "\t\t</ul>\n"
+html_list += "\t\t</div>\n\t</body>\n</html>"
 html = html_header + html_list
 
-if (!array_for_archiving.empty?)
+
+# Do a bunch of stuff only if there's new content today.
+if (!archive_array.empty?)
+
 
 	# Write index.html to disk.
+	puts "Write index.html to disk"
 
 	begin
 		file = File.new("#{directory_for_script}/index.html", "w")
@@ -136,8 +166,10 @@ if (!array_for_archiving.empty?)
 		puts err
 	end
 
-	# Archive the existing JSON
-	
+
+	# Archive the day's JSON. Create the necessary heirarchy.
+	puts "Archive the day's JSON."
+
 	archive_path = File.join(directory_for_script, "archive")
 	if !File.directory?(archive_path)
 		Dir.mkdir(archive_path, 0700)
@@ -155,18 +187,21 @@ if (!array_for_archiving.empty?)
 		Dir.mkdir(month_path, 0700)
 	end
 	
-	json_to_save = JSON.generate(array_for_archiving)
+	json_to_save = JSON.generate(archive_array)
 	json_filename = Time.now.strftime("%Y%m%d")
 	begin
 		file = File.new("#{month_path}/#{json_filename}.json", "w")
 		file.write(json_to_save)
 		file.close
 	rescue => err
-		puts "Couldn't write today's json!"
+		puts "Couldn't write today's JSON!"
 		puts err
 	end
 
+
 	# Create (or re-create) the archive page for the current month
+	# TODO: This doesn't actually work!
+	puts "Create (or recreate) the archive page for the current month"
 
 	page_list = ""
 	Dir.glob(month_path + "/*.json") { |filename|
@@ -196,16 +231,17 @@ if (!array_for_archiving.empty?)
 	end
 
 	
-	# Create RSS feed
+	# Create RSS feed.
+	puts "Create RSS feed."
 	
 	rss = RSS::Maker.make("atom") do |maker|
-		maker.channel.author = "Kyle O'Brien"
+		maker.channel.author = BULLETIN_RSS_AUTHOR
 		maker.channel.updated = Time.now.to_s
 		maker.channel.about = "http://www.ruby-lang.org/en/feeds/news.rss"
-		maker.channel.title = "ridethewalr.us"
-		maker.channel.link = "http://ridethewalr.us/"
+		maker.channel.title = BULLETIN_RSS_TITLE
+		maker.channel.link = BULLETIN_RSS_LINK
 	
-		array_for_archiving.each { |bookmarked_item|
+		archive_array.each { |bookmarked_item|
 			maker.items.new_item do |item|
 				item.link = "#{bookmarked_item["u"]}"
 				item.title = "#{bookmarked_item["d"]}"
@@ -213,10 +249,9 @@ if (!array_for_archiving.empty?)
 				item.description = markdown.render(bookmarked_item["n"])
 				item.updated = "#{bookmarked_item["dt"]}"
 			end
-	        }
+	    }
 	end
 	
-	# save the rss to a file
 	begin
 		file = File.new("#{directory_for_script}/links.atom", "w")
 		file.write(rss)
@@ -227,15 +262,16 @@ if (!array_for_archiving.empty?)
 	end
 
 
-	# Zip up the contents of the site, upload it to S3, then delete the local copy.
+	# Zip up the contents of the site..
+	puts "Zip up the contents of the site."
 	
-	root_folder = directory_for_script
-	zip_filename = root_folder + '/' + json_filename + '.zip'
+	zip_filename = directory_for_script + '/' + json_filename + '.zip'
+	deleteZipBackup(zip_filename)
 	
 	Zip::ZipFile.open(zip_filename, Zip::ZipFile::CREATE) do |zipfile|
 		filenames = ['index.html', 'main.css', 'links.atom', 'favicon.ico', 'touch-icon-ipad-precomposed.png', 'touch-icon-ipad-retina-precomposed.png', 'touch-icon-iphone-precomposed.png', 'touch-icon-iphone-retina-precomposed.png']
 		filenames.each do |filename|
-			zipfile.add(filename, root_folder + '/' + filename)
+			zipfile.add(filename, directory_for_script + '/' + filename)
 		end
 		
 		Dir.glob(archive_path + '/*/') { |year_folder|
@@ -249,9 +285,11 @@ if (!array_for_archiving.empty?)
 			}
 		}
 	end
+
 	
-	# TODO: Need to upload to S3 here.
-	puts "backing up..."	
+	# Upload zip file to S3.
+	puts "Upload zip file to S3."
+	
 	access_key_id = 'access_key_id_placeholder'
 	secret_access_key = 'secret_access_key_placeholder'
 	begin
@@ -281,20 +319,18 @@ if (!array_for_archiving.empty?)
 	AWS::S3::S3Object.store(file, open(zip_filename), BULLETIN_S3_BUCKET_NAME)
 
 	AWS::S3::Base.disconnect!()
-	puts "done backing up."
-	# Maybe check at the beginning and delete first so we don't error if there's an existing?
-	begin
-		file = File.delete(zip_filename)
-	rescue => err
-		puts "Couldn't delete the local, temporary zip file!"
-		puts err
-	end
-
-	puts "end of script!"
+	
+	deleteZipBackup(zip_filename)	
 end
 
-puts "made it to the end"
+puts "Script execution complete."
+
+# ===================
+# =  END OF SCRIPT  =
+# ===================
+
 
 # Restore standard output.
 
 $stdout = STDOUT
+

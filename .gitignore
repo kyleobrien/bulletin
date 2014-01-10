@@ -2,7 +2,7 @@ archive/
 .amazon_keys
 index.html
 links.atom
-walruser.log
+bulletin.log
 *.zip
 .DS_Store
 

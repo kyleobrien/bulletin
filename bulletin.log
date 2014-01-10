@@ -1,0 +1,31 @@
+Grab the JSON-formatted feed from pinboard.
+Pull out relevant information from each item in the JSON response.
+Assemble the webpage.
+Write index.html to disk
+Archive the day's JSON.
+Create (or recreate) the archive page for the current month
+Create RSS feed.
+Zip up the contents of the site.
+============================
+2014-01-10T19:57:58+0000
+Grab the JSON-formatted feed from pinboard.
+Pull out relevant information from each item in the JSON response.
+Assemble the webpage.
+Write index.html to disk
+Archive the day's JSON.
+Create (or recreate) the archive page for the current month
+Create RSS feed.
+Zip up the contents of the site.
+Upload zip file to S3.
+============================
+2014-01-10T20:13:42+0000
+Grab the JSON-formatted feed from pinboard.
+Pull out relevant information from each item in the JSON response.
+Assemble the webpage.
+Write index.html to disk
+Archive the day's JSON.
+Create (or recreate) the archive page for the current month
+Create RSS feed.
+Zip up the contents of the site.
+Upload zip file to S3.
+Script execution complete.
