@@ -2,20 +2,20 @@
 <feed xmlns="http://www.w3.org/2005/Atom"
   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <author>
-    <name>Kyle O'Brien</name>
+    <name>Kyle O&amp;rsquo;Brien</name>
   </author>
   <id>http://www.ruby-lang.org/en/feeds/news.rss</id>
   <link href="http://kyleobrien.net/links/"/>
   <title>links</title>
-  <updated>2014-01-10T20:13:42+00:00</updated>
+  <updated>2014-01-16T02:51:25+00:00</updated>
   <entry>
-    <id>https://thedaywefightback.org/</id>
-    <link href="https://thedaywefightback.org/"/>
-    <summary>&lt;p&gt;Online activism to fight NSA spying. Feels light on meaningful action a regular citizen could take to curtail these abuses. Website banners and social networks aren&amp;#39;t going to cut it.&lt;/p&gt;
+    <id>http://www.twitch.tv/speeddemosarchivesda/b/494222408?t=7h51m20s</id>
+    <link href="http://www.twitch.tv/speeddemosarchivesda/b/494222408?t=7h51m20s"/>
+    <summary>&lt;p&gt;Amazing finish. (via &lt;a href=&quot;https://twitter.com/shauninman/status/423536014796136449&quot;&gt;@shauninman&lt;/a&gt;)&lt;/p&gt;
 </summary>
-    <title>The Day We Fight Back</title>
-    <updated>2014-01-10T19:18:52Z</updated>
-    <dc:date>2014-01-10T19:18:52Z</dc:date>
+    <title>AGDQ 2014 Four Way Super Metroid Race</title>
+    <updated>2014-01-15T19:40:10Z</updated>
+    <dc:date>2014-01-15T19:40:10Z</dc:date>
   </entry>
-  <dc:date>2014-01-10T20:13:42+00:00</dc:date>
+  <dc:date>2014-01-16T02:51:25+00:00</dc:date>
 </feed>
